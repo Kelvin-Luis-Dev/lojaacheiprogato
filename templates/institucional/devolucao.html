@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-slate-50 min-h-screen py-12 lg:py-20">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <h1 class="text-3xl font-[900] text-slate-900 mb-12 uppercase tracking-tight border-b-4 border-primary-teal inline-block">
+            Trocas e Devoluções
+        </h1>
+
+        <div class="space-y-4">
+            <details class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden" open>
+                <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-slate-700 uppercase text-xs tracking-widest">
+                    Direito de Arrependimento (7 dias)
+                    <i class="bi bi-chevron-down transition-transform group-open:rotate-180"></i>
+                </summary>
+                <div class="p-6 pt-0 text-slate-600 text-sm leading-relaxed border-t border-slate-50">
+                    Você tem até <strong>7 dias corridos</strong> após o recebimento para solicitar a devolução por arrependimento. O produto deve estar em condições novas, com embalagem original, manuais e acessórios.
+                </div>
+            </details>
+
+            <details class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-slate-700 uppercase text-xs tracking-widest">
+                    Produtos com Defeito ou Danificados
+                    <i class="bi bi-chevron-down transition-transform group-open:rotate-180"></i>
+                </summary>
+                <div class="p-6 pt-0 text-slate-600 text-sm leading-relaxed border-t border-slate-50">
+                    Para bens duráveis que apresentarem defeito, o prazo de garantia legal é de <strong>90 dias</strong>. Se o produto chegar danificado, com defeito ou diferente do esperado, entre em contato imediatamente com fotos ou vídeos comprovando o problema para que possamos processar o reembolso ou substituição sem custos de frete para você.
+                </div>
+            </details>
+
+            <details class="group bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-slate-700 uppercase text-xs tracking-widest">
+                    Prazos para Reembolso
+                    <i class="bi bi-chevron-down transition-transform group-open:rotate-180"></i>
+                </summary>
+                <div class="p-6 pt-0 text-slate-600 text-sm leading-relaxed border-t border-slate-50">
+                    O processamento do reembolso leva de <strong>1 a 10 dias úteis</strong> após a confirmação da devolução. Para pagamentos via Cartão de Crédito, o valor poderá aparecer em até duas faturas subsequentes. Para PIX ou Boleto, o reembolso será processado via conta bancária do titular.
+                </div>
+            </details>
+        </div>
+    </div>
+</div>
+{% endblock %}

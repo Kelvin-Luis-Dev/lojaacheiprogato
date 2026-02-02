@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-slate-50 min-h-screen py-12 md:py-20">
+    <div class="container mx-auto px-4 max-w-2xl text-center">
+        <h1 class="text-3xl font-[900] text-slate-900 mb-4 uppercase tracking-tight">Rastrear Pedido 🐾</h1>
+
+        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-8 text-left rounded-r-xl">
+            <p class="text-amber-800 text-xs font-bold uppercase mb-1">Atenção sobre Rastreio Internacional:</p>
+            <p class="text-amber-700 text-[11px] leading-relaxed">
+                Como trabalhamos com fornecedores exclusivos, seu código pode levar de 3 a 7 dias úteis para ser atualizado no sistema nacional. Se o código aparecer como "não encontrado", não se preocupe, seu pedido já está a caminho!
+            </p>
+        </div>
+
+        <div class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-2xl">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2 text-left">
+                        <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-4">Número do Pedido</label>
+                        <input type="text" name="pedido_id" required placeholder="Ex: 13"
+                               class="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary-teal font-bold text-center">
+                    </div>
+                    <div class="space-y-2 text-left">
+                        <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-4">E-mail da Compra</label>
+                        <input type="email" name="identificador" required placeholder="seu@email.com"
+                               class="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary-teal font-bold text-center">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-primary-teal text-white py-5 rounded-2xl font-black uppercase text-xs shadow-lg shadow-teal-500/30 hover:scale-[1.02] transition-all">
+                    Localizar Pedido
+                </button>
+            </form>
+
+            {% if erro %}
+                <div class="mt-6 p-4 bg-red-50 text-red-600 rounded-xl font-bold text-sm">
+                    {{ erro }}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if pedido %}
+        <div class="mt-8 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl text-left">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 class="font-black text-slate-900 text-lg">Pedido #{{ pedido.id }}</h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase">{{ pedido.criado_em|date:"d/m/Y H:i" }}</p>
+                </div>
+                <span class="bg-primary-teal/10 text-primary-teal px-4 py-2 rounded-full text-xs font-black uppercase">
+                    {{ pedido.get_status_display }}
+                </span>
+            </div>
+
+            <div class="space-y-6 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100">
+                <div class="relative pl-10">
+                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-primary-teal border-4 border-white"></div>
+                    <p class="font-bold text-sm text-slate-900">Pagamento Recebido</p>
+                    <p class="text-xs text-slate-500">Seu pagamento foi confirmado com sucesso.</p>
+                </div>
+
+                {% if pedido.status != 'pendente' %}
+                <div class="relative pl-10">
+                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full {% if pedido.status == 'pago' or pedido.status == 'em_separacao' %}bg-amber-400{% else %}bg-primary-teal{% endif %} border-4 border-white"></div>
+                    <p class="font-bold text-sm text-slate-900">Preparando para o Envio</p>
+                    <p class="text-xs text-slate-500">Estamos processando seu pedido junto ao fornecedor.</p>
+                </div>
+                {% endif %}
+
+                {% if pedido.codigo_rastreio %}
+                <div class="relative pl-10">
+                    <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-orange-500 border-4 border-white"></div>
+                    <p class="font-bold text-sm text-slate-900">Pedido Enviado!</p>
+                    <p class="text-xs text-slate-500 mb-3">Seu pacote já está em transporte internacional.</p>
+                    <div class="inline-block bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Código de Rastreio</p>
+                        <span class="font-mono font-bold text-slate-700">{{ pedido.codigo_rastreio }}</span>
+                        <a href="https://www.ebanxtrack.com/tracking?code={{ pedido.codigo_rastreio }}" target="_blank"
+                           class="block mt-2 text-primary-teal text-[10px] font-black uppercase underline">
+                           Rastreio Global 17Track/Ebanx →
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-slate-50 min-h-screen py-12 lg:py-20">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <h1 class="text-3xl font-[900] text-slate-900 mb-12 uppercase tracking-tight border-b-4 border-primary-teal inline-block">
+            Política de Entrega e Envios
+        </h1>
+
+        <div class="grid gap-6">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="font-black text-slate-900 mb-4 uppercase text-sm tracking-widest">Prazos e Processamento</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    Trabalhamos com um modelo de curadoria internacional. Após a confirmação do pagamento, seu pedido passa por um período de processamento de <strong>1 a 3 dias úteis</strong>. O prazo estimado de entrega para qualquer lugar do Brasil varia de <strong>10 a 25 dias úteis</strong> após o envio, podendo variar conforme a agilidade dos Correios e da alfândega.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="font-black text-slate-900 mb-4 uppercase text-sm tracking-widest">Acompanhamento do Pedido</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    Você receberá um código de rastreamento por e-mail assim que o produto for despachado. Note que o status da entrega pode levar de <strong>1 a 2 dias úteis</strong> para ser atualizado no sistema logístico após o envio inicial.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm border-l-4 border-l-amazon-orange">
+                <h3 class="font-black text-slate-900 mb-4 uppercase text-sm tracking-widest text-amazon-orange">Atenção ao Endereço</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    A <strong>AcheiProGato</strong> providenciará o envio dos produtos para o endereço que você solicitar. Portanto, pedimos atenção total no preenchimento dos dados. Caso o produto não seja entregue por erro no endereço ou ausência do destinatário após 3 tentativas, o pacote retornará ao remetente.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

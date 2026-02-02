@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="w-full bg-slate-50 min-h-screen">
+
+    <div class="w-full bg-white border-b border-slate-100 py-12 lg:py-16 px-6 lg:px-20">
+        <div class="max-w-7xl">
+            <nav class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
+                <a href="{% url 'home' %}" class="hover:text-primary-teal transition">Home</a>
+                <i class="bi bi-chevron-right text-[8px]"></i>
+                <span class="text-slate-900">Todos os Produtos</span>
+            </nav>
+            <h1 class="text-4xl lg:text-5xl font-[900] text-slate-900 tracking-tight">
+                Tudo para o seu <span class="text-primary-teal">Felino</span>
+            </h1>
+            <p class="text-slate-500 font-medium mt-4 max-w-2xl italic">
+                "A maior curadoria de produtos premium importados e nacionais para gatos, testada por especialistas."
+            </p>
+        </div>
+    </div>
+
+    <div class="w-full px-6 lg:px-20 py-12 flex flex-col lg:flex-row gap-12">
+
+        <aside class="w-full lg:w-72 space-y-10 order-2 lg:order-1">
+            <div>
+                <h3 class="font-black text-slate-900 uppercase tracking-widest text-xs mb-6 pb-2 border-b-2 border-primary-teal inline-block">
+                    Categorias
+                </h3>
+                <ul class="space-y-4">
+                    <li>
+                        <a href="{% url 'lista_produtos' %}" class="text-sm font-bold flex items-center justify-between w-full transition-colors {% if not request.GET.categoria %}text-primary-teal{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+                            <span>Todos os Produtos</span>
+                        </a>
+                    </li>
+                    {% for slug, name in categories_list %}
+                    <li>
+                        <a href="{% url 'lista_produtos' %}?categoria={{ slug }}" class="text-sm font-bold flex items-center justify-between w-full transition-colors {% if request.GET.categoria == slug %}text-primary-teal{% else %}text-slate-500 hover:text-slate-800{% endif %}">
+                            <span>{{ name }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="bg-primary-teal/5 p-8 rounded-[2.5rem] border border-primary-teal/10 space-y-4">
+                <h4 class="font-black text-slate-800 text-sm tracking-tight leading-tight">Dúvidas sobre o melhor brinquedo?</h4>
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">Fale agora com nossos especialistas em comportamento felino.</p>
+                <a href="https://wa.me/5547991103924" target="_blank" rel="noopener noreferrer" class="text-[10px] font-black text-primary-teal uppercase tracking-widest inline-flex items-center gap-2 hover:translate-x-1 transition-transform">
+                    Chamar no WhatsApp <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 order-1 lg:order-2">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                        {{ produtos.count }} itens encontrados
+                    </span>
+                </div>
+
+                <form method="GET" class="flex items-center gap-4 w-full md:w-auto">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline">Ordenar por:</span>
+                    <select name="ordem" onchange="this.form.submit()" class="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-primary-teal w-full md:w-48 cursor-pointer">
+                        <option value="">Padrão</option>
+                        <option value="mais_vendidos" {% if request.GET.ordem == 'mais_vendidos' %}selected{% endif %}>Mais Vendidos</option>
+                        <option value="promocoes" {% if request.GET.ordem == 'promocoes' %}selected{% endif %}>Melhores Ofertas</option>
+                    </select>
+                    {% if request.GET.categoria %}
+                        <input type="hidden" name="categoria" value="{{ request.GET.categoria }}">
+                    {% endif %}
+                </form>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+                {% for produto in produtos %}
+                <div class="bg-white rounded-[2.5rem] p-3 md:p-5 border border-slate-100 hover:shadow-2xl transition-all group relative flex flex-col text-left">
+                    {% if produto.promocao %}
+                    <div class="absolute top-5 left-5 z-10 bg-amazon-orange text-white text-[8px] font-[900] px-3 py-1.5 rounded-full uppercase shadow-lg">
+                        Oferta
+                    </div>
+                    {% endif %}
+
+                    <div class="relative aspect-square rounded-[2rem] overflow-hidden bg-slate-50 mb-5">
+                        {% if produto.imagem %}
+                        <img src="{{ produto.imagem.url }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        {% endif %}
+                    </div>
+
+                    <div class="px-1 flex-1 flex flex-col">
+                        <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">{{ produto.marca|default:"AcheiProGato" }}</span>
+                        <h3 class="font-bold text-slate-800 text-xs md:text-sm leading-tight mt-1 mb-2 line-clamp-2">
+                            {{ produto.nome }}
+                        </h3>
+
+                        <div class="flex items-center gap-1 text-[#FF9900] text-[10px] mb-4 h-4">
+                            {% with total=produto.avaliacoes.count %}
+                                {% if total > 0 %}
+                                    <i class="bi bi-star-fill text-[8px]"></i>
+                                    <span class="text-slate-900 font-black ml-1">{{ produto.obter_media_notas }}</span>
+                                    <span class="text-slate-400 ml-1">({{ total }})</span>
+                                {% else %}
+                                    <span class="text-slate-300 italic font-medium">Sem avaliações</span>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+
+                        <div class="flex items-end justify-between mt-auto pb-1">
+                            <div>
+                                <p class="text-[8px] text-slate-400 font-bold uppercase leading-none mb-1">A partir de</p>
+                                <p class="text-base md:text-xl font-[900] text-slate-900 tracking-tighter">R$ {{ produto.preco_venda }}</p>
+                            </div>
+                            <a href="{% url 'produto_detalhe' produto.pk %}" class="w-9 h-9 md:w-11 md:h-11 bg-slate-900 text-white rounded-2xl flex items-center justify-center hover:bg-amazon-orange transition-all shadow-lg active:scale-90">
+                                <i class="bi bi-plus-lg text-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-32 text-center space-y-4">
+                    <div class="text-5xl">😿</div>
+                    <h3 class="text-xl font-bold text-slate-800">Nenhum produto encontrado</h3>
+                    <p class="text-slate-500">Tente ajustar seus filtros ou buscar por outro termo.</p>
+                    <a href="{% url 'lista_produtos' %}" class="text-primary-teal font-black uppercase text-xs tracking-widest underline">Limpar filtros</a>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

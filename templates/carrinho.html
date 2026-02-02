@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-slate-50 min-h-screen py-12 lg:py-20 px-6 lg:px-20">
+    <h1 class="text-3xl font-black text-slate-900 mb-10 tracking-tight">Meu Carrinho</h1>
+    
+    <div class="grid lg:grid-cols-3 gap-12">
+        <div class="lg:col-span-2 space-y-4">
+            {% for item in itens %}
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center gap-6">
+                <img src="{{ item.produto.imagem.url }}" class="w-24 h-24 object-contain bg-slate-50 rounded-2xl">
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800">{{ item.produto.nome }}</h3>
+                    <p class="text-xs text-slate-400 font-black uppercase tracking-widest mt-1">{{ item.produto.marca }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-lg font-black text-slate-900">R$ {{ item.subtotal }}</p>
+                    <p class="text-xs text-slate-400 font-bold">Qtd: {{ item.quantidade }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-white p-20 rounded-[2.5rem] text-center border-2 border-dashed border-slate-200">
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">Seu carrinho está vazio 😿</p>
+                <a href="{% url 'lista_produtos' %}" class="inline-block mt-6 text-primary-teal font-black underline">Continuar Comprando</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm h-fit sticky top-24">
+            <h3 class="font-black text-xs uppercase tracking-widest text-slate-400 mb-6">Total da Compra</h3>
+            <div class="flex justify-between items-baseline mb-8">
+                <span class="font-black text-slate-900 uppercase text-xs">Total</span>
+                <span class="text-3xl font-black text-primary-teal tracking-tighter">R$ {{ total }}</span>
+            </div>
+            <a href="{% url 'checkout' %}" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-sm block text-center hover:bg-primary-teal transition-all">
+                Finalizar Todos os Itens
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="relative bg-slate-50 overflow-hidden py-12 lg:py-24 w-full">
+    <div class="w-full px-4 lg:px-20 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+
+        <div class="space-y-8 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 bg-white border border-slate-100 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500 shadow-sm">
+                <i class="bi bi-geo-alt text-primary-teal"></i> Tudo em um só lugar
+            </div>
+
+            <h1 class="text-6xl lg:text-8xl font-[900] text-slate-900 leading-[0.9] tracking-tighter">
+                Tudo para o <br> <span class="text-primary-teal">universo pet</span> <br> no seu lar.
+            </h1>
+
+            <p class="text-slate-500 font-medium max-w-md mx-auto lg:mx-0 text-lg">
+                A maior variedade de acessórios para o conforto do seu felino com curadoria exclusiva.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
+                <a href="{% url 'lista_produtos' %}" class="w-full sm:w-auto bg-amazon-orange text-white px-10 py-5 rounded-2xl font-[900] uppercase text-sm shadow-xl shadow-orange-500/30 hover:scale-105 transition-all text-center">
+                    Ver Ofertas
+                </a>
+
+                <div class="flex items-center gap-3">
+                    <div class="flex -space-x-3">
+                        <img src="https://i.pravatar.cc/100?img=1" class="w-10 h-10 rounded-full border-2 border-white shadow-sm">
+                        <img src="https://i.pravatar.cc/100?img=12" class="w-10 h-10 rounded-full border-2 border-white shadow-sm">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-600">+1.5k</div>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none">+1.500 Clientes</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">SATISFEITOS</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative hidden lg:flex justify-end h-full">
+            <div class="relative w-full max-w-[590px]">
+                <div class="absolute -inset-4 bg-primary-teal/10 rounded-[4rem] rotate-6"></div>
+                <img src="{% static 'img/cat.png' %}"
+                     class="relative w-full h-auto max-h-[600px] object-contain rounded-[4rem] shadow-2xl transition-transform duration-500 hover:scale-105">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 lg:px-20 -mt-10 relative z-20">
+    {% for slug, name in categories_list %}
+    <a href="{% url 'lista_produtos' %}?categoria={{ slug }}"
+       class="bg-white p-4 md:p-8 rounded-[1.5rem] md:rounded-[2rem] shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col items-center hover:-translate-y-2 transition-all duration-300 group text-center">
+
+        <div class="w-10 h-10 md:w-14 md:h-14 bg-slate-50 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl text-primary-teal mb-3 md:mb-4 group-hover:bg-primary-teal group-hover:text-white transition-colors">
+            {% if slug == 'brinquedos' %}<i class="bi bi-controller"></i>
+            {% elif slug == 'alimentacao' %}<i class="bi bi-egg-fried"></i>
+            {% elif slug == 'conforto' %}<i class="bi bi-house-heart"></i>
+            {% else %}<i class="bi bi-stars"></i>{% endif %}
+        </div>
+
+        <h4 class="font-black text-[9px] md:text-[10px] uppercase tracking-widest text-slate-800">{{ name }}</h4>
+
+        <span class="hidden md:block text-[9px] font-bold text-slate-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">VER TUDO</span>
+    </a>
+    {% endfor %}
+</div>
+
+<section class="w-full px-4 lg:px-20 py-12 lg:py-24">
+    <div class="flex items-center justify-between mb-8 md:mb-14">
+        <div class="space-y-2">
+            <div class="flex items-center gap-2 text-primary-teal font-black text-[10px] uppercase tracking-widest">
+                <i class="bi bi-star-fill text-[8px]"></i> Os Favoritos
+            </div>
+            <h2 class="text-2xl md:text-4xl font-[900] text-slate-900 tracking-tight leading-none">
+                Destaques da <span class="text-primary-teal">Semana</span>
+            </h2>
+        </div>
+
+        <a href="{% url 'lista_produtos' %}" class="text-[10px] font-[900] text-slate-400 hover:text-primary-teal transition uppercase tracking-widest border-b-2 border-slate-100 pb-1">
+            Ver tudo
+        </a>
+    </div>
+
+
+
+    <div class="flex overflow-x-auto pb-8 gap-4 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:gap-8 lg:overflow-visible lg:pb-0 scrollbar-hide">
+        {% for produto in produtos|slice:":8" %}
+        <div class="min-w-[200px] w-[200px] md:min-w-0 md:w-auto snap-start bg-white rounded-[2rem] md:rounded-[2.5rem] p-3 md:p-5 border border-slate-100 hover:shadow-2xl transition-all group relative flex flex-col">
+
+            {% if produto.promocao %}
+            <div class="absolute top-4 left-4 z-10 bg-amazon-orange text-white text-[8px] font-[900] px-3 py-1.5 rounded-full uppercase shadow-lg">
+                Oferta
+            </div>
+            {% endif %}
+
+            <div class="relative aspect-square rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-slate-50 mb-4 md:mb-5">
+                {% if produto.imagem %}
+                <img src="{{ produto.imagem.url }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                {% endif %}
+            </div>
+
+            <div class="px-1 flex-1 flex flex-col text-left">
+                <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">{{ produto.marca|default:"AcheiProGato" }}</span>
+                <h3 class="font-bold text-slate-800 text-xs md:text-sm leading-tight mt-1 mb-2 line-clamp-2 h-8 md:h-10">
+                    {{ produto.nome }}
+                </h3>
+
+                <div class="flex items-center gap-1 text-[#FF9900] text-[9px] md:text-[10px] mb-4 h-4">
+                    {% with total=produto.avaliacoes.count %}
+                        {% if total > 0 %}
+                            <i class="bi bi-star-fill text-[8px]"></i>
+                            <span class="text-slate-900 font-black ml-1">{{ produto.obter_media_notas }}</span>
+                        {% else %}
+                            <span class="text-slate-300 italic font-medium">Novo!</span>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <div class="flex items-end justify-between mt-auto pb-1">
+                    <div>
+                        <p class="text-[8px] text-slate-400 font-bold uppercase leading-none mb-1">Valor</p>
+                        <p class="text-sm md:text-xl font-[900] text-slate-900 tracking-tighter">R$ {{ produto.preco_venda }}</p>
+                    </div>
+                    <a href="{% url 'produto_detalhe' produto.pk %}" class="w-9 h-9 md:w-11 md:h-11 bg-slate-900 text-white rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-amazon-orange transition-all shadow-lg active:scale-90">
+                        <i class="bi bi-plus-lg text-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}

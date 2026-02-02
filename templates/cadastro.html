@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tighter">Criar Conta</h2>
+            <p class="text-slate-400 text-sm font-medium mt-2">Junte-se à família AcheiProGato</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div>
+                        <label class="text-[10px] font-black uppercase text-slate-500 ml-2">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="text-slate-400 text-[9px] mt-1 ml-2">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-[10px] mt-1 italic">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="w-full bg-primary-teal text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg hover:scale-[1.02] transition-all mt-6">
+                Finalizar Cadastro
+            </button>
+        </form>
+
+        <p class="text-center mt-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Já tem uma conta? <a href="{% url 'login' %}" class="text-primary-teal underline">Faça login aqui</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Estilização para manter os inputs bonitos como no resto do site */
+    input {
+        width: 100%;
+        background-color: #f8fafc;
+        border: 1px solid #f1f5f9 !important;
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        outline: none;
+        transition: all 0.2s;
+    }
+    input:focus {
+        border-color: #00a8a8 !important;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(0, 168, 168, 0.05);
+    }
+</style>
+{% endblock %}
