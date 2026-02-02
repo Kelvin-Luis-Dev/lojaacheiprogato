@@ -4,8 +4,6 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-import mercadopago
-from django.conf import settings
 import requests
 from django.shortcuts import render
 from .utils import consultar_frete_adm
@@ -56,102 +54,6 @@ def produto_detalhe(request, pk):  # Mudado de id para pk
         'avaliacoes': avaliacoes
     })
 
-def checkout(request):
-    carrinho = request.session.get('carrinho', {})
-    if not carrinho:
-        return redirect('home')
-
-    total = 0
-    itens_checkout = []
-
-    # Corrigido: Tratamento de chaves com hífens (variantes)
-    for key, qtd in carrinho.items():
-        parts = key.split('-')
-        p_id = int(parts[0])
-        v_id = int(parts[1]) if len(parts) > 1 else None
-
-        produto = get_object_or_404(Produto, id=p_id)
-        variacao = Variacao.objects.get(id=v_id) if v_id else None
-
-        subtotal = float(produto.preco_venda) * qtd
-        total += subtotal
-        itens_checkout.append({
-            'produto': produto,
-            'variacao': variacao,
-            'quantidade': qtd,
-            'subtotal': subtotal
-        })
-
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        novo_pedido = Pedido.objects.create(
-            nome_cliente=request.POST.get('nome'),
-            email=request.POST.get('email'),
-            telefone=request.POST.get('telefone'),
-            pais=request.POST.get('pais'),
-            cep=request.POST.get('cep'),
-            endereco=request.POST.get('endereco'),
-            bairro=request.POST.get('bairro'),
-            cidade=request.POST.get('cidade'),
-            estado=request.POST.get('estado'),
-            metodo_pagamento=request.POST.get('pagamento'),
-            total=total,
-            status='pendente'
-        )
-
-        # Corrigido: Vincula os produtos e as variações corretamente
-        for item in itens_checkout:
-            ItemPedido.objects.create(
-                pedido=novo_pedido,
-                produto=item['produto'],
-                variacao=item['variacao'],  # Agora o banco sabe a cor/tamanho!
-                quantidade=item['quantidade'],
-                preco_unitario=item['produto'].preco_venda
-            )
-
-        try:
-            sdk = mercadopago.SDK(settings.MERCADO_PAGO_TOKEN)
-            if novo_pedido.metodo_pagamento == 'pix':
-                payment_data = {
-                    "transaction_amount": float(total),
-                    "description": f"Pedido #{novo_pedido.id} - AcheiProGato",
-                    "payment_method_id": "pix",
-                    "payer": {
-                        "email": novo_pedido.email,
-                        "first_name": novo_pedido.nome_cliente.split()[0],
-                    }
-                }
-                payment_response = sdk.payment().create(payment_data)
-                if payment_response["status"] >= 400:
-                    raise ValueError("Instabilidade no Mercado Pago")
-
-                payment = payment_response["response"]
-                request.session['carrinho'] = {}
-                request.session.modified = True
-
-                return JsonResponse({
-                    'status': 'sucesso',
-                    'metodo': 'pix',
-                    'qr_code_base64': payment['point_of_interaction']['transaction_data']['qr_code_base64'],
-                    'copy_paste': payment['point_of_interaction']['transaction_data']['qr_code'],
-                    'pedido_id': novo_pedido.id
-                })
-
-            request.session['carrinho'] = {}
-            request.session.modified = True
-            return JsonResponse({'status': 'sucesso', 'metodo': 'cartao', 'pedido_id': novo_pedido.id})
-
-        except Exception as e:
-            request.session['carrinho'] = {}
-            request.session.modified = True
-            return JsonResponse({
-                'status': 'erro_pagamento',
-                'mensagem': 'O sistema de pagamentos está instável. Seu pedido foi recebido e entraremos em contato via WhatsApp! 🐾'
-            })
-
-    return render(request, 'checkout.html', {
-        'itens': itens_checkout,
-        'total': round(total, 2)
-    })
 
 def adicionar_ao_carrinho(request, produto_id):
     # Captura a variação vinda da URL (ex: ?variacao_id=5)
@@ -400,7 +302,7 @@ def calcular_frete_api(cep_destino, itens_carrinho):
     url = "https://sandbox.melhorenvio.com.br/api/v2/me/shipment/calculate" # Use a URL de produção depois
     headers = {
         'Accept': 'application/json',
-        'Authorization': 'Bearer SEU_TOKEN_AQUI'
+        'Authorization': f"Bearer {os.getenv('MELHOR_ENVIO_TOKEN')}"
     }
     # Payload com as dimensões dos produtos (você pode usar valores médios por enquanto)
     payload = {
@@ -450,6 +352,17 @@ def painel_frete(request):
         opcoes = consultar_frete_adm(cep_limpo)
 
     return render(request, 'admin/painel_frete.html', {'opcoes': opcoes})
+
+
+def exibir_checkout(request):
+    dados_carrinho = carrinho_detalhado(request)
+    if not dados_carrinho['carrinho_lateral']:
+        return redirect('home')
+
+    return render(request, 'checkout.html', {
+        'itens': dados_carrinho['carrinho_lateral'],
+        'total_carrinho_lateral': dados_carrinho['total_carrinho_lateral']
+    })
 
 # loja_gatos/store/views.py
 def finalizar_pedido(request):
